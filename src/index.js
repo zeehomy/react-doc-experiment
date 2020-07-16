@@ -179,7 +179,24 @@ class Clock extends React.Component {
   }
 }
 
+// ReactDOM.render(
+//   <Clock />,
+//   document.getElementById('root')
+// );
+
+// -------------------------------------
+// 每个组件都是真正独立的
+function App() {
+  return (
+    <div>
+      <Clock />
+      <Clock />
+      <Clock />
+    </div>
+  );
+}
+
 ReactDOM.render(
-  <Clock />,
+  <App />,
   document.getElementById('root')
 );
