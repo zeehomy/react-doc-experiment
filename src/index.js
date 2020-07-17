@@ -72,8 +72,12 @@ function tryConvert(temperature, convert) {
     return '';
   }
   const output = convert(input);
-  const rounded = Math.round(output * 1000) / 1000;
+  const rounded = Math.round(output * 1000) / 1000;     // 为了只在输入了三位小数以后才保留三位
   return rounded.toString();
+
+  // 或者始终生成三位小数（体验稍差，相互输入后显示不一致）
+  // const outputString = output.toFixed(3);
+  // return outputString;
 }
 
 class Calculator extends React.Component {
