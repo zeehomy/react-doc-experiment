@@ -29,18 +29,23 @@ class TemperatureInput extends React.Component {
   constructor(props) {
     super(props);
     this.handleChange = this.handleChange.bind(this);
-    this.state = {
-      temperature: ''
-    };
+
+    // 提升至父组件
+    // this.state = {
+    //   temperature: ''
+    // };
   }
 
   handleChange(e) {
-    this.setState({temperature: e.target.value});
+    // Before: this.setState({temperature: e.target.value});
+    this.props.onTemperatureChange(e.target.value);
   }
 
   render() {
-    const temperature = this.state.temperature;
+    // Before: const temperature = this.state.temperature;
+    const temperature = this.props.temperature;
     const scale = this.props.scale;
+
     return (
       <fieldset>
         <legend>Enter temperature in {scaleNames[scale]}:</legend>
@@ -72,12 +77,44 @@ function tryConvert(temperature, convert) {
 }
 
 class Calculator extends React.Component {
-  
+  constructor(props) {
+    super(props);
+    this.handleTemperatureChange = this.handleTemperatureChange.bind(this);
+
+    // 我们可以存储两个输入框中的值，但这并不是必要的;只需要存储最近修改的温度及其计量单位即可
+    this.state = {
+      temperature: '',
+      scale: 'c'
+    };
+  }
+
+  handleTemperatureChange(scale, temperature) {
+    this.setState({
+      temperature: temperature,
+      scale: scale
+    });
+  }
+
   render() {
+    const scale = this.state.scale;
+    const temperature = this.state.temperature;
+    // 摄氏温度
+    const celsius = scale === 'f' ? tryConvert(temperature, toCelsius) : temperature;
+
+    // 华氏温度
+    const fahrenheit = scale === 'c' ? tryConvert(temperature, toFahrenheit) : temperature;
+
     return (
       <div>
-        <TemperatureInput scale="c" />
-        <TemperatureInput scale="f" />
+        <TemperatureInput scale="c"
+          temperature={celsius}
+          onTemperatureChange={(temperature) => this.handleTemperatureChange('c', temperature)}
+        />
+        <TemperatureInput scale="f"
+          temperature={fahrenheit}
+          onTemperatureChange={(temperature) => this.handleTemperatureChange('f', temperature)}
+        />
+        <BoilingVerdict celsius={parseFloat(celsius)}/>
       </div>
     );
   }
