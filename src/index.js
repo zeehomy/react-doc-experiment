@@ -333,51 +333,282 @@ import ReactDOM from 'react-dom';
 
 // ---------------------------------------
 // 阻止渲染
-function WarningBanner(props) {
-  if (!props.warn) {
-    return null;                    // 让组件返回null
-  }
+// function WarningBanner(props) {
+//   if (!props.warn) {
+//     return null;                    // 让组件返回null
+//   }
 
-  return (
-    <div className="warning">Warning!</div>
-  )
-}
+//   return (
+//     <div className="warning">Warning!</div>
+//   )
+// }
 
-class Page extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      showWarning: true
-    };
-    this.handleToggleClick = this.handleToggleClick.bind(this);
-  }
+// class Page extends React.Component {
+//   constructor(props) {
+//     super(props);
+//     this.state = {
+//       showWarning: true
+//     };
+//     this.handleToggleClick = this.handleToggleClick.bind(this);
+//   }
 
-  handleToggleClick(event) {
-    console.log('target', event.target);
-    console.log('currentTarget', event.currentTarget);
-    this.setState(state => ({
-      showWarning: !state.showWarning
-    }));
-  }
+//   handleToggleClick(event) {
+//     console.log('target', event.target);
+//     console.log('currentTarget', event.currentTarget);
+//     this.setState(state => ({
+//       showWarning: !state.showWarning
+//     }));
+//   }
 
-  // 在组件的 render 方法中返回 null 并不会影响组件的生命周期。
-  componentDidUpdate() {
-    console.log('componentDidUpdate');
-  }
+//   // 在组件的 render 方法中返回 null 并不会影响组件的生命周期。
+//   componentDidUpdate() {
+//     console.log('componentDidUpdate');
+//   }
 
-  render() {
-    return (
-      <div>
-        <WarningBanner warn={this.state.showWarning} />
-        <button onClick={this.handleToggleClick}>
-          {this.state.showWarning ? 'Hide' : 'Show'}
-        </button>
-      </div>
-    )
-  }
-}
+//   render() {
+//     return (
+//       <div>
+//         <WarningBanner warn={this.state.showWarning} />
+//         <button onClick={this.handleToggleClick}>
+//           {this.state.showWarning ? 'Hide' : 'Show'}
+//         </button>
+//       </div>
+//     )
+//   }
+// }
 
+// ReactDOM.render(
+//   <Page />,
+//   document.getElementById('root')
+// );
+
+// ------------------------------------
+// 列表渲染
+// function ListItem(props) {
+//   const value = props.value;
+//   return (
+//     <li li-key={value.toString()}>{value}</li>
+//   );
+// }
+
+// function NumberList(props) {
+//   const numbers = props.numbers;
+//   return (                                        // key不会不会传递给子组件
+//     <ul>
+//       {
+//         numbers.map((number) => 
+//           <ListItem key={number.toString()}
+//             value={number}
+//           />
+//         )
+//       }
+//     </ul>
+//   );
+// }
+
+// const numbers = [1, 2, 3, 4, 5];
+// ReactDOM.render(
+//   <NumberList numbers={numbers} />,
+//   document.getElementById('root')
+// );
+
+// -------------------------------------
+// 受控组件
+// input
+// class NameForm extends React.Component {
+//   constructor(props) {
+//     super(props);
+//     this.state = {value: '123'};
+
+//     this.handleChange = this.handleChange.bind(this);
+//     this.handleSubmit = this.handleSubmit.bind(this);
+//   }
+
+//   handleChange(event) {
+//     this.setState({value: event.target.value});
+//   }
+
+//   handleSubmit(event) {
+//     alert('提交的名字: ' + this.state.value);
+//     event.preventDefault();
+//   }
+
+//   render() {
+//     return (                                        // 事件属性的表达式是否要调用，取决于this的绑定绑定方式（3种）
+//       <form onSubmit={this.handleSubmit}>
+//         <label>
+//           名字:
+//           <input type="text"
+//             value={this.state.value}
+//             onChange={this.handleChange}
+//           />
+//         </label>
+//         <input type="submit" value="提交" />
+//       </form>
+//     );
+//   }
+// }
+
+// ReactDOM.render(
+//   <NameForm />,
+//   document.getElementById('root')
+// );
+
+// textarea
+// class EssayForm extends React.Component {
+//   constructor(props) {
+//     super(props);
+//     this.state = {
+//       value: '请撰写一篇关于你喜欢的 DOM 元素的文章.'
+//     };
+
+//     this.handleChange = this.handleChange.bind(this);
+//     this.handleSubmit = this.handleSubmit.bind(this);
+//   }
+
+//   handleChange(event) {
+//     // this.setState({value: event.target.value});
+//   }
+
+//   handleSubmit(event) {
+//     alert('提交的文章: ' + this.state.value);
+//     event.preventDefault();
+//   }
+
+//   render() {
+//     return (
+//       <form onSubmit={this.handleSubmit}>
+//         <label>
+//           文章:
+//           <textarea value={this.state.value}
+//             onChange={this.handleChange}
+//           />
+//         </label>
+//         <input type="submit" value="提交" />
+//       </form>
+//     );
+//   }
+// }
+
+// ReactDOM.render(
+//   <EssayForm />,
+//   document.getElementById('root')
+// );
+
+// ----------------------------------
+// select
+// class FlavorForm extends React.Component {
+//   constructor(props) {
+//     super(props);
+//     this.state = {value: 'coconut'};
+
+//     this.handleChange = this.handleChange.bind(this);
+//     this.handleSubmit = this.handleSubmit.bind(this);
+//   }
+
+//   handleChange(event) {
+//     this.setState({value: event.target.value});
+//   }
+
+//   handleSubmit(event) {
+//     alert('你喜欢的风味是: ' + this.state.value);
+//     event.preventDefault();
+//   }
+
+//   render() {
+//     return (
+//       <form onSubmit={this.handleSubmit}>
+//         <label>
+//           选择你喜欢的风味:
+//           <select
+//             value={this.state.value}
+//             onChange={this.handleChange}>
+//             <option value="grapefruit">葡萄柚</option>
+//             <option value="lime">酸橙</option>
+//             <option value="coconut">椰子</option>
+//             <option value="mango">芒果</option>
+//           </select>
+//         </label>
+//         <input type="submit" value="提交" />
+//       </form>
+//     );
+//   }
+// }
+
+// ReactDOM.render(
+//   <FlavorForm />,
+//   document.getElementById('root')
+// );
+
+// --------------------------------------
+// 多个输入 
+// class Reservation extends React.Component {
+//   constructor(props) {
+//     super(props);
+//     this.state = {
+//       isGoing: true,
+//       numberOfGuests: 2
+//     };
+
+//     this.handleInputChange = this.handleInputChange.bind(this);
+//   }
+
+//   // 根据 event.target.name 的值选择要执行的操作
+//   handleInputChange(event) {
+//     const target = event.target;
+//     const value = target.name === 'isGoing' ? target.checked : target.value;
+//     const name = target.name;
+
+//     this.setState({
+//       [name]: value
+//     });
+//     // 等同于
+//     // var partialState = {};
+//     // partialState[name] = value;
+//     // this.setState(partialState);
+//   }
+
+//   render() {
+//     return (
+//       <form>
+//         <label>
+//           参与:
+//           <input
+//             name="isGoing"
+//             type="checkbox"
+//             checked={this.state.isGoing}
+//             onChange={this.handleInputChange} />
+//         </label>
+//         <br />
+//         <label>
+//           来宾人数:
+//           <input
+//             name="numberOfGuests"
+//             type="number"
+//             value={this.state.numberOfGuests}
+//             onChange={this.handleInputChange} />
+//         </label>
+//       </form>
+//     );
+//   }
+// }
+// ReactDOM.render(
+//   <Reservation />,
+//   document.getElementById('root')
+// );
+
+// ----------------------------------------
+// 受控输入空值
 ReactDOM.render(
-  <Page />,
+  <input value="hi" />,
   document.getElementById('root')
 );
+
+setTimeout(function() {
+  ReactDOM.render(
+  <input value={null} />,
+  document.getElementById('root')
+);
+}, 3000);
+
+// --------------------------------------
