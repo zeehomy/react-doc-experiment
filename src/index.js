@@ -11,16 +11,20 @@ const PRODUCTS = [
 ];
 
 class SearchBar extends React.Component {
+
+  // 或者 新建本地事件处理函数，传入指定值
   render() {
     return (
       <form>
         <input type="text"
           placeholder="Search..."
           value={this.props.filterText}
+          onChange={this.props.handleInputChang}
         />
         <p>
           <input type="checkbox"
-            checked={this.props.isStockOnlu}
+            checked={this.props.isStockOnly}
+            onChange={this.props.handleCheckboxChang}
           />
           {' '}
           Only show products in stock
@@ -59,7 +63,7 @@ class ProductRow extends React.Component {
 class ProductTable extends React.Component {
   render () {
     const filterText = this.props.filterText;
-    const isStockOnlu = this.props.isStockOnlu;
+    const isStockOnly = this.props.isStockOnly;
 
     const rows = [];
     let currentCategory = null;
@@ -72,7 +76,7 @@ class ProductTable extends React.Component {
         return;
       }
 
-      if (isStockOnlu && !productItem.stocked) {
+      if (isStockOnly && !productItem.stocked) {
         return;
       }
 
@@ -92,6 +96,35 @@ class ProductTable extends React.Component {
       );
       // 替换类型
       currentCategory = productItem.category;
+
+      // 写法二
+      // // 关键字不匹配
+      // if (productItem.name.indexOf(filterText) === -1) {
+      //   return;
+      // } else {
+
+      //   if (isStockOnly && !productItem.stocked) {
+      //     return;
+      //   } else {
+
+      //     // 先写类型
+      //     if (productItem.category !== currentCategory) {
+      //       rows.push(
+      //         <ProductCategoryRow key={productItem.category}
+      //           category={productItem.category}
+      //         />
+      //       );
+      //     }
+      //     // 再写内容
+      //     rows.push(
+      //       <ProductRow key={productItem.name}
+      //         product={productItem}
+      //       />
+      //     );
+      //     // 替换类型
+      //     currentCategory = productItem.category;
+      //   }
+      // }
     });
 
     return (
@@ -113,19 +146,39 @@ class FilterableProductTable extends React.Component {
     super(props);
     this.state = {
       filterText: 'ball',
-      isStockOnlu: false
+      isStockOnly: false
     };
+    this.handleInputChang = this.handleInputChang.bind(this);
+    this.handleCheckboxChang = this.handleCheckboxChang.bind(this);
+  }
+
+  handleInputChang(e) {
+    this.setState(
+      {
+        filterText: e.target.value
+      }
+    );
+  }
+
+  handleCheckboxChang(e) {
+    this.setState(
+      {
+        isStockOnly: e.target.checked
+      }
+    );
   }
 
   render() {
     return (
       <div>
         <SearchBar filterText={this.state.filterText}
-          isStockOnlu={this.state.isStockOnlu}
+          isStockOnly={this.state.isStockOnly}
+          handleInputChang={this.handleInputChang}
+          handleCheckboxChang={this.handleCheckboxChang}
         />
         <ProductTable products={this.props.products} 
           filterText={this.state.filterText}
-          isStockOnlu={this.state.isStockOnlu}
+          isStockOnly={this.state.isStockOnly}
         />
       </div>
     );
