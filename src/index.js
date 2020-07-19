@@ -14,9 +14,15 @@ class SearchBar extends React.Component {
   render() {
     return (
       <form>
-        <input type="text" placeholder="Search..." />
+        <input type="text"
+          placeholder="Search..."
+          value={this.props.filterText}
+        />
         <p>
-          <input type="checkbox" />
+          <input type="checkbox"
+            checked={this.props.isStockOnlu}
+          />
+          {' '}
           Only show products in stock
         </p>
       </form>
@@ -52,11 +58,24 @@ class ProductRow extends React.Component {
 
 class ProductTable extends React.Component {
   render () {
+    const filterText = this.props.filterText;
+    const isStockOnlu = this.props.isStockOnlu;
+
     const rows = [];
     let currentCategory = null;
 
     this.props.products.forEach(productItem => {
-      
+      /*  显示匹配结果，只需拦截掉完全不匹配的情况，让匹配的通过即可 */
+
+      // 关键字不匹配
+      if (productItem.name.indexOf(filterText) === -1) {
+        return;
+      }
+
+      if (isStockOnlu && !productItem.stocked) {
+        return;
+      }
+
       // 先写类型
       if (productItem.category !== currentCategory) {
         rows.push(
@@ -65,7 +84,7 @@ class ProductTable extends React.Component {
           />
         );
       }
-      // 在写内容
+      // 再写内容
       rows.push(
         <ProductRow key={productItem.name}
           product={productItem}
@@ -90,11 +109,24 @@ class ProductTable extends React.Component {
 }
 
 class FilterableProductTable extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      filterText: 'ball',
+      isStockOnlu: false
+    };
+  }
+
   render() {
     return (
       <div>
-        <SearchBar />
-        <ProductTable products={this.props.products}/>
+        <SearchBar filterText={this.state.filterText}
+          isStockOnlu={this.state.isStockOnlu}
+        />
+        <ProductTable products={this.props.products} 
+          filterText={this.state.filterText}
+          isStockOnlu={this.state.isStockOnlu}
+        />
       </div>
     );
   }
