@@ -30,9 +30,13 @@ import ReactDOM from 'react-dom';
 //     // 无论多深，任何组件都能读取这个值。
 //     // 在这个例子中，我们将 “dark” 作为当前的值传递下去。
 //     return (
-//       <ThemeContext.Provider value="dark">
+//       <>
+//         <ThemeContext.Provider value="dark">
+//           <Toolbar />
+//         </ThemeContext.Provider>
+//         当不使用ThemeContext.Provider组件时，this.context为默认值
 //         <Toolbar />
-//       </ThemeContext.Provider>
+//       </>
 //     );
 //   }
 // }
@@ -103,55 +107,79 @@ import ReactDOM from 'react-dom';
 
 // -----------------------------------
 
-// 在顶层控制的模式，将底层组件传递下去;中间组件无需知道众多props：
-class NavigationBar extends React.Component {
+// // 在顶层控制的模式，将底层组件传递下去;中间组件无需知道众多props：
+// class NavigationBar extends React.Component {
+//   render() {
+//     return (
+//       this.props.userLink         // 直接渲染JSX节点属性
+//     );
+//   }
+// }
+
+// function PageLayout(props) {
+//   return (
+//     <NavigationBar userLink={props.userLink}/>
+//   );
+// }
+
+// function Link(props) {
+//   return (
+//     <a href={props.href}>
+//       {props.children}
+//     </a>
+//   );
+// }
+
+// function Avatar(props) {
+//   return (
+//     `${props.user}  ${props.size}`
+//   );
+// }
+
+// function Page(props) {
+//   const href = props.href;
+//   const user = props.user;
+//   const userLink = (
+//     <Link href={href}>
+//       <Avatar user={user}
+//         size={props.avatarSize}
+//       />
+//     </Link>
+//   );
+//   return <PageLayout userLink={userLink} />;
+// }
+
+// const user = 'tadddd';
+// const avatarSize = 3;
+
+// ReactDOM.render(
+//   <Page user={user}
+//     avatarSize={avatarSize}
+//     href="#"
+//   />,
+//   document.getElementById('root')
+// );
+
+// -------------------------------------
+
+// Context.displayName
+const ThemeContext = React.createContext('light');
+ThemeContext.displayName = 'MyDisplayName';
+
+class App extends React.Component {
   render() {
     return (
-      this.props.userLink         // 直接渲染JSX节点属性
+      <ThemeContext.Provider value="dark">
+        <div>sdfsdfdsf</div>
+      </ThemeContext.Provider>
     );
   }
 }
 
-function PageLayout(props) {
-  return (
-    <NavigationBar userLink={props.userLink}/>
-  );
-}
-
-function Link(props) {
-  return (
-    <a href={props.href}>
-      {props.children}
-    </a>
-  );
-}
-
-function Avatar(props) {
-  return (
-    `${props.user}  ${props.size}`
-  );
-}
-
-function Page(props) {
-  const href = props.href;
-  const user = props.user;
-  const userLink = (
-    <Link href={href}>
-      <Avatar user={user}
-        size={props.avatarSize}
-      />
-    </Link>
-  );
-  return <PageLayout userLink={userLink} />;
-}
-
-const user = 'tadddd';
-const avatarSize = 3;
-
 ReactDOM.render(
-  <Page user={user}
-    avatarSize={avatarSize}
-    href="#"
-  />,
+  <App />,
   document.getElementById('root')
 );
+
+// -------------------------------------
+// 
