@@ -43,8 +43,81 @@ import ReactDOM from 'react-dom';
 // );
 
 // ----------------------------------
+// // 传统传值方式
+// function Link(props) {
+//   return (
+//     <a href={props.href}>
+//       {props.children}
+//     </a>
+//   );
+// }
 
-// 传统传值方式
+// function Avatar(props) {
+//   return (
+//     `${props.user}  ${props.size}`
+//   );
+// }
+
+// class NavigationBar extends React.Component {
+//   render() {
+//     return (
+//       <Link href={this.props.href}>
+//         <Avatar user={this.props.user}
+//           size={this.props.avatarSize}
+//         />
+//       </Link>
+//     );
+//   }
+// }
+
+// function PageLayout(props) {
+//   return (
+//     <NavigationBar user={props.user}
+//       avatarSize={props.avatarSize}
+//       href={props.href}
+//     />
+//   );
+// }
+
+// class Page extends React.Component {
+//   render() {
+//     return (
+//       <PageLayout user={this.props.user}
+//         avatarSize={this.props.avatarSize}
+//         href={this.props.href}
+//       />
+//     );
+//   }
+// }
+
+// const user = 'tad';
+// const avatarSize = 3;
+
+// ReactDOM.render(
+//   <Page user={user}
+//     avatarSize={avatarSize}
+//     href="#"
+//   />,
+//   document.getElementById('root')
+// );
+
+// -----------------------------------
+
+// 在顶层控制的模式，将底层组件传递下去;中间组件无需知道众多props：
+class NavigationBar extends React.Component {
+  render() {
+    return (
+      this.props.userLink         // 直接渲染JSX节点属性
+    );
+  }
+}
+
+function PageLayout(props) {
+  return (
+    <NavigationBar userLink={props.userLink}/>
+  );
+}
+
 function Link(props) {
   return (
     <a href={props.href}>
@@ -59,39 +132,20 @@ function Avatar(props) {
   );
 }
 
-class NavigationBar extends React.Component {
-  render() {
-    return (
-      <Link href={this.props.href}>
-        <Avatar user={this.props.user}
-          size={this.props.avatarSize}
-        />
-      </Link>
-    );
-  }
-}
-
-function PageLayout(props) {
-  return (
-    <NavigationBar user={props.user}
-      avatarSize={props.avatarSize}
-      href={props.href}
-    />
-  );
-}
-
-class Page extends React.Component {
-  render() {
-    return (
-      <PageLayout user={this.props.user}
-        avatarSize={this.props.avatarSize}
-        href={this.props.href}
+function Page(props) {
+  const href = props.href;
+  const user = props.user;
+  const userLink = (
+    <Link href={href}>
+      <Avatar user={user}
+        size={props.avatarSize}
       />
-    );
-  }
+    </Link>
+  );
+  return <PageLayout userLink={userLink} />;
 }
 
-const user = 'tad';
+const user = 'tadddd';
 const avatarSize = 3;
 
 ReactDOM.render(
