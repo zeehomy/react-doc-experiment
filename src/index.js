@@ -163,23 +163,170 @@ import ReactDOM from 'react-dom';
 // -------------------------------------
 
 // Context.displayName
-const ThemeContext = React.createContext('light');
-ThemeContext.displayName = 'MyDisplayName';
+// const ThemeContext = React.createContext('light');
+// ThemeContext.displayName = 'MyDisplayName';
+
+// class App extends React.Component {
+//   render() {
+//     return (
+//       <ThemeContext.Provider value="dark">
+//         <div>sdfsdfdsf</div>
+//       </ThemeContext.Provider>
+//     );
+//   }
+// }
+
+// ReactDOM.render(
+//   <App />,
+//   document.getElementById('root')
+// );
+
+// -------------------------------------
+// 动态 Context
+// const themes = {
+//   light: {
+//     foreground: '#000000',
+//     background: '#eeeeee',
+//   },
+//   dark: {
+//     foreground: '#ffffff',
+//     background: '#222222',
+//   },
+// };
+
+// const ThemeContext = React.createContext(
+//   themes.dark // 默认值
+// );
+
+// class ThemedButton extends React.Component {
+//   render() {
+//     let props = this.props;
+//     let theme = this.context;
+//     return (
+//       <button
+//         {...props}
+//         style={{backgroundColor: theme.background}}
+//       />
+//     );
+//   }
+// }
+// ThemedButton.contextType = ThemeContext;
+
+// // 一个使用 ThemedButton 的中间组件
+// function Toolbar(props) {
+//   return (
+//     <ThemedButton onClick={props.changeTheme}>
+//       Change Theme
+//     </ThemedButton>
+//   );
+// }
+
+// class App extends React.Component {
+//   constructor(props) {
+//     super(props);
+//     this.state = {
+//       theme: themes.light,
+//     };
+
+//     this.toggleTheme = () => {
+//       this.setState(state => ({
+//         theme:
+//           state.theme === themes.dark
+//             ? themes.light
+//             : themes.dark,
+//       }));
+//     };
+//   }
+
+//   render() {
+//     // 在 ThemeProvider 内部的 ThemedButton 按钮组件使用 state 中的 theme 值，
+//     // 而外部的组件使用默认的 theme 值
+//     return (
+//       <>
+//         <ThemeContext.Provider value={this.state.theme}>
+//           <Toolbar changeTheme={this.toggleTheme} />
+//         </ThemeContext.Provider>
+//         <section>
+//           <ThemedButton>default button</ThemedButton>
+//         </section>
+//       </>
+//     );
+//   }
+// }
+// ReactDOM.render(<App />, document.getElementById('root'));
+
+// -----------------------------------------
+// 在嵌套组件中更新 Context （含Consumer）
+const themes = {
+  light: {
+    foreground: '#000000',
+    background: '#eeeeee',
+  },
+  dark: {
+    foreground: '#ffffff',
+    background: '#222222',
+  },
+};
+
+const ThemeContext = React.createContext({
+  theme: themes.dark,
+  toggleTheme: () => {},
+});
+
+function ThemeTogglerButton() {
+  // Theme Toggler 按钮不仅仅只获取 theme 值，它也从 context 中获取到一个 toggleTheme 函数
+  return (
+    <ThemeContext.Consumer>
+      {({theme, toggleTheme}) => (
+        <button onClick={toggleTheme}
+          style={{backgroundColor: theme.background}}>
+          Toggle Theme
+        </button>
+      )}
+    </ThemeContext.Consumer>
+  );
+}
+
+ // 中间组件 并没有使用context，而在子组件中有使用
+ function Content() {
+  return (
+    <div>
+      <ThemeTogglerButton />
+    </div>
+  );
+}
 
 class App extends React.Component {
+  constructor(props) {
+    super(props);
+
+    // constructor中的方法
+    this.toggleTheme = () => {
+      this.setState(state => ({
+        theme:
+          state.theme === themes.dark
+            ? themes.light
+            : themes.dark,
+      }));
+    };
+
+    // State 也包含了更新函数，因此它会被传递进 context provider。
+    this.state = {
+      theme: themes.light,
+      toggleTheme: this.toggleTheme,
+    };
+  }
+
   render() {
+    // 整个 state 都被传递进 provider
     return (
-      <ThemeContext.Provider value="dark">
-        <div>sdfsdfdsf</div>
+      <ThemeContext.Provider value={this.state}>
+        <Content />
       </ThemeContext.Provider>
     );
   }
 }
 
-ReactDOM.render(
-  <App />,
-  document.getElementById('root')
-);
+ReactDOM.render(<App />, document.getElementById('root'));
 
-// -------------------------------------
-// 
+// ------------------------------------
