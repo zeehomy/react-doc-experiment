@@ -256,77 +256,141 @@ import ReactDOM from 'react-dom';
 // ReactDOM.render(<App />, document.getElementById('root'));
 
 // -----------------------------------------
-// 在嵌套组件中更新 Context （含Consumer）
-const themes = {
-  light: {
-    foreground: '#000000',
-    background: '#eeeeee',
-  },
-  dark: {
-    foreground: '#ffffff',
-    background: '#222222',
-  },
+// // 在嵌套组件中更新 Context （含Consumer）
+// const themes = {
+//   light: {
+//     foreground: '#000000',
+//     background: '#eeeeee',
+//   },
+//   dark: {
+//     foreground: '#ffffff',
+//     background: '#222222',
+//   },
+// };
+
+// const ThemeContext = React.createContext({
+//   theme: themes.dark,
+//   toggleTheme: () => {},
+// });
+
+// function ThemeTogglerButton() {
+//   // Theme Toggler 按钮不仅仅只获取 theme 值，它也从 context 中获取到一个 toggleTheme 函数
+//   return (
+//     <ThemeContext.Consumer>
+//       {({theme, toggleTheme}) => (
+//         <button onClick={toggleTheme}
+//           style={{backgroundColor: theme.background}}>
+//           Toggle Theme
+//         </button>
+//       )}
+//     </ThemeContext.Consumer>
+//   );
+// }
+
+//  // 中间组件 并没有使用context，而在子组件中有使用
+//  function Content() {
+//   return (
+//     <div>
+//       <ThemeTogglerButton />
+//     </div>
+//   );
+// }
+
+// class App extends React.Component {
+//   constructor(props) {
+//     super(props);
+
+//     // constructor中的方法
+//     this.toggleTheme = () => {
+//       this.setState(state => ({
+//         theme:
+//           state.theme === themes.dark
+//             ? themes.light
+//             : themes.dark,
+//       }));
+//     };
+
+//     // State 也包含了更新函数，因此它会被传递进 context provider。
+//     this.state = {
+//       theme: themes.light,
+//       toggleTheme: this.toggleTheme,
+//     };
+//   }
+
+//   render() {
+//     // 整个 state 都被传递进 provider
+//     return (
+//       <ThemeContext.Provider value={this.state}>
+//         <Content />
+//       </ThemeContext.Provider>
+//     );
+//   }
+// }
+
+// ReactDOM.render(<App />, document.getElementById('root'));
+
+// ------------------------------------
+// 消费多个 Context
+
+const theme = 'dart';
+const signedInUser = {
+  name: 'asd'
 };
 
-const ThemeContext = React.createContext({
-  theme: themes.dark,
-  toggleTheme: () => {},
-});
-
-function ThemeTogglerButton() {
-  // Theme Toggler 按钮不仅仅只获取 theme 值，它也从 context 中获取到一个 toggleTheme 函数
+// 一个组件可能会消费多个 context
+function Content() {
   return (
     <ThemeContext.Consumer>
-      {({theme, toggleTheme}) => (
-        <button onClick={toggleTheme}
-          style={{backgroundColor: theme.background}}>
-          Toggle Theme
-        </button>
+      {theme => (
+        <UserContext.Consumer>
+          {user => (
+            <div>
+              {theme}
+              {user.name}
+            </div>
+          )}
+        </UserContext.Consumer>
       )}
     </ThemeContext.Consumer>
   );
 }
 
- // 中间组件 并没有使用context，而在子组件中有使用
- function Content() {
+// 中间组件
+function Layout() {
   return (
     <div>
-      <ThemeTogglerButton />
+      <Content />
     </div>
   );
 }
 
+// Theme context，默认的 theme 是 “light” 值
+const ThemeContext = React.createContext('light');
+
+// 用户登录 context
+const UserContext = React.createContext({
+  name: 'Guest',
+});
+
+
 class App extends React.Component {
-  constructor(props) {
-    super(props);
-
-    // constructor中的方法
-    this.toggleTheme = () => {
-      this.setState(state => ({
-        theme:
-          state.theme === themes.dark
-            ? themes.light
-            : themes.dark,
-      }));
-    };
-
-    // State 也包含了更新函数，因此它会被传递进 context provider。
-    this.state = {
-      theme: themes.light,
-      toggleTheme: this.toggleTheme,
-    };
-  }
-
   render() {
-    // 整个 state 都被传递进 provider
+    const {signedInUser, theme} = this.props;
+
+    // 提供初始 context 值的 App 组件
     return (
-      <ThemeContext.Provider value={this.state}>
-        <Content />
+      <ThemeContext.Provider value={theme}>
+        <UserContext.Provider value={signedInUser}>
+          <Layout />
+        </UserContext.Provider>
       </ThemeContext.Provider>
     );
   }
 }
 
-ReactDOM.render(<App />, document.getElementById('root'));
-
-// ------------------------------------
+ReactDOM.render(
+  <App theme={theme}  
+    signedInUser={signedInUser}
+  />,
+  document.getElementById('root')
+);
